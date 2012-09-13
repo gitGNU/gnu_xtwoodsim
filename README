@@ -1,0 +1,66 @@
+This is the readme for XTwoodSim, a Solver for the 
+free Finite Element Solver Elmer (www.elmerfem.org).
+
+CONTENT
+1. Copying
+2. What is the software about?
+3. Compilation
+4. Contact
+
+
+1. Copying
+! *  XTwoodSim, A Solver for the Finite Element Software Elmer
+! *  
+! *  Copyright 11th September 2012 - , Uwe Jaschke
+! *  
+! *  The files case.sif, ELMERSOLVER_STARTINFO and SOLVER.KEYWORDS
+! *  are part of XTwoodSim.
+! *  
+! *      XTwoodSim is free software: you can redistribute it and/or modify
+! *      it under the terms of the GNU General Public License as published by
+! *      the Free Software Foundation, either version 3 of the License, or
+! *      (at your option) any later version.
+! *  
+! *      XTwoodSim is distributed in the hope that it will be useful,
+! *      but WITHOUT ANY WARRANTY; without even the implied warranty of
+! *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! *      GNU General Public License for more details.
+! *  
+! *      You should have received a copy of the GNU General Public License
+! *      along with XTwoodSim.  If not, see <http://www.gnu.org/licenses/>.
+! *  
+! *      Diese Datei ist Teil von XTwoodSim.
+! *  
+! *      XTwoodSim ist Freie Software: Sie können es unter den Bedingungen
+! *      der GNU General Public License, wie von der Free Software Foundation,
+! *      Version 3 der Lizenz oder (nach Ihrer Option) jeder späteren
+! *      veröffentlichten Version, weiterverbreiten und/oder modifizieren.
+! *  
+! *      XTwoodSim wird in der Hoffnung, dass es nützlich sein wird, aber
+! *      OHNE JEDE GEWÄHELEISTUNG, bereitgestellt; sogar ohne die implizite
+! *      Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
+! *      Siehe die GNU General Public License für weitere Details.
+! *  
+! *      Sie sollten eine Kopie der GNU General Public License zusammen mit diesem
+! *      Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
+! *********************************************************************************
+
+2. What is the software about?
+The solver calculates the strongly coupled 
+heat and moisture field for wood and is based on the finite element software elmer (http://www.csc.fi/english/pages/elmer) and extends it with special userfunctions for wood specific nonlinear material parameters and the possibility to simulate the sorret-effect and heat change due to evaporation. It is based on diffusion equations for heat and moisture. That's why it is not usefull above the fibre saturation point. Furthermore the influence of pressure gradients is considered negligible. This results in a low accuracy above 70°C. 
+The modell also supports relative humidity as an extension to the classic dirichlet, neuman and cauchy boundary conditions.
+
+The code is written entirely in Fortran95 and Fortran2000 and makes use of the object-oriented possibilities offered by those languages.
+
+3. Compilation
+It contains several files. To compile run make in XTwoodSim/MyLibrary
+and the command "ElmerSolver" per command line in XTwoodSim/. A simple 
+test case will be calculated with the results saved in XTwoodSim/cube/post/
+
+4. Contact
+For further inspiration, questions, bugreport and other issues contact
+me under 
+
+XTwoodSim@posteo.de
+
+

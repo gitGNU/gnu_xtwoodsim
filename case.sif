@@ -1,0 +1,189 @@
+  Header
+    CHECK KEYWORDS Warn
+    Mesh DB "." "cube"
+    Include Path "MyLibrary"
+    Results Directory ""
+  End
+
+  Simulation
+    Max Output Level = 3
+    Coordinate System = Cartesian
+    Coordinate Mapping(3) = 1 2 3
+    Simulation Type = Transient 
+    
+    Steady State Max Iterations = 15
+    Steady State Min Iterations = 1
+  
+    Timestepping Method = BDF
+    BDF Order = 1
+  
+    Output Intervals = 1
+    Timestep intervals =  120
+    Timestep Sizes = 10800
+
+    !Adaptive Timestepping = True
+    !Adaptive Time Error = 1.0e-7
+    !Adaptive Min Timestep = 2500
+    Solver Input File = case.sif
+    Post File = case.ep
+
+    Nonlinear Update Exported Variables = LOGICAL True  
+  End
+
+  Constants
+    Gravity(4) = 0 -1 0 9.82
+    Stefan Boltzmann = 5.67e-08
+    Permittivity of Vacuum = 8.8542e-12
+    Boltzmann Constant = 1.3807e-23
+    Unit Charge = 1.602e-19
+  End
+
+  Body 1
+    Target Bodies(1) = 1
+    Name = "Body 1"
+    Equation = 1
+    Material = 1
+    Initial condition(1) = 1
+    Body Force = 1
+  End
+  
+  Solver 1
+    Equation = "Eriksson2006 Equation"
+    Variable = STRING Fields[MoistureContent:1 Temperature:1]
+    Variable DOFS = 2
+    Procedure = "MyLibrary/Eriksson2006Solve" "Eriksson2006Solve"
+    Exec Solver = Always
+    
+    Steady State Convergence Tolerance = 1.0e-9
+  
+    Nonlinear System Convergence Tolerance = 1.0e-12
+    Nonlinear System Convergence Measure = Residual
+    Nonlinear System Max Iterations = 50
+    Nonlinear System Relaxation Factor = 1
+    
+    Linear System Solver = Iterativ
+    Linear System Iterative Method = BiCGStabl
+    Linear System Max Iterations = 500
+    Linear System Convergence Tolerance = 1.0e-8
+    Linear System Preconditioning = ILU0
+    Linear System ILUT Tolerance = 1.0e-3
+    Linear System Abort Not Converged = TRUE
+    Linear System Residual Output = 1
+    Linear System Precondition Recompute = 1
+  End
+
+  Solver 2
+    Procedure = File "SaveData" "SaveMaterials"
+    Equation = STRING "SaveScalar"
+    Exec Solver = before saving
+    Parameter 1 = String "RH"
+    Parameter 2 = String "Specific Heat capacity"
+    Parameter 3 = String "dwdH"
+    Parameter 4 = String "Eb"
+    !Parameter 5 = String "Outer_RH"
+  END 
+  
+  Solver 3
+    Procedure = File "SaveData" "SaveBoundaryValues"
+    Equation = String "SaveBoundaryValues"
+    Exec Solver = before saving
+    Body Force Parameters 1 = String "MoistureSupply"
+    Body Force Parameters 2 = String "HeatSource"
+    Parameter 1 = String "T_SURF"
+    Parameter 2 = String "MC_SURF"
+    Parameter 3 = String "HeatFlux"
+    Parameter 4 = String "MoistureFlux"
+  END
+ 
+  Solver 4
+    Procedure = File "ResultOutputSolve" "ResultOutputSolver"
+    Exec Solver = String "before saving"	
+    exec interval = 1
+    Equation = String "ResultOutput"
+    Output File Name = String "post/cubecase3." !or any other output file name of your choice
+    Output Format = String "vtk"
+    Vtk Format = Logical True
+  End
+
+  Equation 1
+    Name = "MyCoupledEquation"
+    Active Solvers(4) = 1 2 3 4
+  End
+
+  Material 1
+    Name = STRING "Pine"
+    Density = 450.0 !try density in kg/m^3
+  
+    Specific Heat capacity = VARIABLE MoistureContent
+    REAL Procedure "MyLibrary/Materialfunktionen" "cDeliiski"
+
+    Conductivity(3,3) = VARIABLE Temperature
+    REAL Procedure "MyLibrary/Materialfunktionen" "D_T_Pine_IHTP"
+    Diffusivity(3,3) = VARIABLE MoistureContent
+    REAL Procedure "MyLibrary/Materialfunktionen" "D_w_Eriksson"
+    ! Activation Energy of Bound Water
+    Eb = VARIABLE MoistureContent !REAL 38 !290 !MCJ/mol
+    REAL Procedure "MyLibrary/Materialfunktionen" "Eb"
+
+    ! Universal gas Constant 
+    R = REAL 8.3144621 !J/(Mol K)
+
+    !relative humidity in Equilibrium with wood  moisture content omega
+    RH = VARIABLE MoistureContent 
+    REAL Procedure "MyLibrary/Materialfunktionen" "RH_Zurwitz"
+
+    !delta MoistureContent/ delta relative humidy is part of the sorret effect
+    dwdH = VARIABLE MoistureContent
+    REAL Procedure "MyLibrary/Materialfunktionen" "dwdH_Zurwitz"
+  End
+
+  Initial Condition 1
+    Name = "InitialCondition 1"
+    Temperature = 283.15 !Temperature in Kelvin
+    MoistureContent = 0.15
+  End
+
+  Body Force 1
+    Name = "Gravity"
+    !MoistureSupply = 0.0000004
+    !HeatSource = 86
+  End
+
+    ! this boundary condition simulates a
+    ! drying schedule for beech wood
+    ! taken from Horacek,2003,Modeling 
+    ! of Coupled Moisture and Heat 
+    ! Transfer During Wood Drying,
+    ! 8th IUFRO Wood Drying Conference
+  Boundary Condition 1
+    Target Boundaries(6) = 1 2 3 4 5 6
+    
+    ! cauchy boundary with dependency on
+    ! relative humidity
+    Moisture Boundary Type = "cauchy"
+    S_MC = REAL 2.8e-8 !m/s
+    MC_SURF = Variable time !% kg/kg
+     REAL Procedure "MyLibrary/Materialfunktionen" "EMC_Zurwitz"
+    Temperature Boundary Type = "cauchy"
+    S_T = 20.0 !W/(m^2 K)
+    T_SURF = VARIABLE time !313.15 !Kelvin
+     REAL
+     0        333.15
+     129600   333.15
+     604800   343.15
+     1209600  343.15
+     1296000  343.15
+     END
+  End 
+
+    ! examples for dirichlet and 
+    ! neumann boundaries
+  !Boundary Condition 2
+    !Target Boundaries(1) = 6
+    !MoistureContent = 0.4
+    !Temperature = 313.15 !Kelvin
+    !Moisture Boundary Type = "neumann"
+    !MoistureFlux = REAL 2.8e-10
+    !Temperature Boundary Type = "neumann"
+    !HeatFlux = 1
+  !End 
