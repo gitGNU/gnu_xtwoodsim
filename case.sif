@@ -87,12 +87,12 @@
     Procedure = File "SaveData" "SaveBoundaryValues"
     Equation = String "SaveBoundaryValues"
     Exec Solver = before saving
-    Body Force Parameters 1 = String "MoistureSupply"
-    Body Force Parameters 2 = String "HeatSource"
+    !Body Force Parameters 1 = String "MoistureSupply"
+    !Body Force Parameters 2 = String "HeatSource"
     Parameter 1 = String "T_SURF"
     Parameter 2 = String "MC_SURF"
-    Parameter 3 = String "HeatFlux"
-    Parameter 4 = String "MoistureFlux"
+    !Parameter 3 = String "HeatFlux"
+    !Parameter 4 = String "MoistureFlux"
   END
  
   Solver 4

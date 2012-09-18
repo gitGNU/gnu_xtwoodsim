@@ -955,3 +955,7 @@ BodyForce:Real:     'Strain'
 BodyForce:String:   'Name'
 BC:STRING:         'Boundary Type'
 BC:STRING:         'Neumann'
+
+SOLVER:String:    'Body Force Parameter 1'
+SOLVER:String:    'Body Force Parameter 2'
+Simulation:Logical: 'Nonlinear Update Exported Variables'

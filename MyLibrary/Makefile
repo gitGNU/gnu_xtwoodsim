@@ -4,11 +4,9 @@ FC=elmerf90
 
 
 # Compiler options
-#FFLAGS=-O0 -g  # No optimization and gdb support
-#FFLAGS=-O -g -Wall -Iusr/share/elmersolver/include/
-#FFLAGS=-O -g -Wall  -I/build/buildd/elmerfem-5.5.0.svn.4458.dfsg/debian/tmp/usr/include -fPIC -m64 -fPIC -fPIC -I. -Ibinio -I/usr/include/mpi -m64 -fPIC -I/usr/share/elmersolver/include -shared 
-#FFLAGS=-O -g -Wall -fPIC -m64 -I/usr/share/elmersolver/include -shared 
-FFLAGS= -Wall 
+FFLAGS=-O0 -g  # No optimization and gdb support
+#FFLAGS= -Wall 
+#FFLAGS= 
 
 
 # List libraries used by the program here
@@ -32,6 +30,9 @@ FOBJ=BauteilClass.o ElementClass.o Eriksson2006DGL_Class.o Eriksson2006Solve.o G
 Eriksson2006Solve: $(FOBJ)
 	$(FC) -o $@ $(FFLAGS) $(LDFLAGS) $(FOBJ) $(LIBS)
 
+Materialfunktionen: $(FOBJ)
+	$(FC) -o $@ $(FFLAGS) $(LDFLAGS) $(FOBJ) $(LIBS)
+
 BauteilClass.o : BauteilClass.f90 ElementClass.o LokaleGekoppelteMatrizenClass.o 
 ElementClass.o : ElementClass.f90 MyStdModules.o Eriksson2006DGL_Class.o GeneralSolverPackage.o GeneralSolverPackage.o GeneralSolverPackage.o GeneralSolverPackage.o GeneralSolverPackage.o Materialeigenschaften.o Materialeigenschaften.o LokaleGekoppelteMatrizenClass.o 
 Eriksson2006DGL_Class.o : Eriksson2006DGL_Class.f90 MyStdModules.o Materialeigenschaften.o Materialeigenschaften.o GeneralSolverPackage.o LokaleGekoppelteMatrizenClass.o 
@@ -41,6 +42,7 @@ LokaleGekoppelteMatrizenClass.o : LokaleGekoppelteMatrizenClass.f90 GeneralSolve
 Materialeigenschaften.o : Materialeigenschaften.f90 
 Materialfunktionen.o : Materialfunktionen.f90 
 MyStdModules.o : MyStdModules.f90 
+
 # target 'clean' for deleting object- *.mod- and other 
 # unwanted files
 clean:
@@ -55,8 +57,8 @@ clean:
 # The argument to the '-o' option will be the name of the
 # resulting program when running 'make', in this case 
 # 'foobar'
-depend .depend:
-	/home/ihd/Software/makedepf90/bin/makedepf90 -o Eriksson2006Solve *.f90 > .depend
+#depend .depend:
+#	/home/ihd/Software/makedepf90/bin/makedepf90 -o Eriksson2006Solve *.f90 > .depend
 
 #dependMaterial .dependMaterial:
 #	/home/ihd/Software/makedepf90/bin/makedepf90 -o Materialfunktionen *.f90 > .depend

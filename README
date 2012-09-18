@@ -57,6 +57,8 @@ It contains several files. To compile run make in XTwoodSim/MyLibrary
 and the command "ElmerSolver" per command line in XTwoodSim/. A simple 
 test case will be calculated with the results saved in XTwoodSim/cube/post/
 
+If Materialfunktionen.f90 is changed run "make Materialfunktionen".
+
 4. Contact
 For further inspiration, questions, bugreport and other issues contact
 me under 

@@ -286,26 +286,32 @@ MODULE Eriksson2006DGL_Class
       FUNCTION gibLokaleMaterialmatrix(Knotenwerte, basisfunktionen)
           REAL(KIND=dp), DIMENSION(:,:,:), INTENT(in) :: Knotenwerte
           REAL(KIND=dp), DIMENSION(:), INTENT(in) :: basisfunktionen
-          REAL(KIND=dp), DIMENSION(:,:), ALLOCATABLE:: gibLokaleMaterialmatrix
+
+          REAL(KIND=dp), DIMENSION(3,3):: gibLokaleMaterialmatrix
 
           INTEGER :: n,a,b,i
-          REAL(KIND=dp), DIMENSION(:,:,:), ALLOCATABLE :: dummy
+          REAL(KIND=dp), DIMENSION(3,3,8):: dummy
           
           IF(SIZE(Knotenwerte,3).eq.SIZE(basisfunktionen)) THEN
               n = SIZE(Knotenwerte,3)
               a = SIZE(Knotenwerte,1)
               b = SIZE(Knotenwerte,2)
-              ALLOCATE(gibLokaleMaterialmatrix(a,b), &
-                  &    dummy(a,b,n))
 
-              DO i=1, n
-                  dummy(:,:,i) = Knotenwerte(:,:,i)*basisfunktionen(i)
-              END DO
-              gibLokaleMaterialmatrix = SUM(dummy,3)
+              IF(n.eq.0.or.a.eq.0.or.b.eq.0) THEN
+                  CALL WARN('Eriksson2006DGL_Class:gibLokaleMaterialmatrix','Die&
+                      &der Funktion übergebenen Werte haben ungewöhnliche&
+                      &Dimensionen.Mindestens ein Wert entspricht 0')
+                  gibLokaleMaterialmatrix = 0.0d0
+              ELSE
+                  DO i=1, n
+                      !print *,SIZE(dummy(:,:,i)), SIZE(Knotenwerte(:,:,i))
+                      dummy(:,:,i) = Knotenwerte(:,:,i)*basisfunktionen(i)
+                  END DO
+                  gibLokaleMaterialmatrix = SUM(dummy,3)
+              ENDIF
           ELSE
               CALL FATAL('Eriksson2006DGL_Class','gibLokalenMaterialwert:&
                   & unterschiedlich lange Vektoren')
-              ALLOCATE(gibLokaleMaterialmatrix(1,1))
               gibLokaleMaterialmatrix = 0.0d0
           ENDIF
           RETURN
